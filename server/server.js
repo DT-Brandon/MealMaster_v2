@@ -24,7 +24,7 @@ mongoose
 
 
 
-app.use(express.static(path.join(__dirname, "../mealer/build")))
+app.use(express.static(path.join(__dirname, "../client/build")))
 /* app.use("/images", express.static(path.join(__dirname, "public/images"))); */
 
 
@@ -84,7 +84,7 @@ app.get("/start", (req, res) => {
 
 
 app.use('/', (req, res) => {
-  res.sendFile(path.join(__dirname, "../mealer/build", "index.html"))
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"))
 })
 
 app.listen(8800, () => {
