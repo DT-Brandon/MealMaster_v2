@@ -1,47 +1,70 @@
 import "./recipes.css";
 import axios from "axios";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { userContext } from "../../userContext";
 import {
   ThumbDownOffAlt,
   ThumbUpOffAlt,
   ThumbDownSharp,
   ThumbUpSharp,
+  FavoriteBorder,
+  Favorite,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router";
 
-export default function Recipes({ recipe, setClicked }) {
-  const [isLiked, setIsLiked] = useState(false);
-  const [isDisLiked, setIsDisLiked] = useState(false);
+export default function Recipes({ recipe }) {
+  const { userInfo, setUserInfo } = useContext(userContext);
+
+  const [isLiked, setIsLiked] = useState(recipe.likes.includes(userInfo?._id));
+  const [isDisLiked, setIsDisLiked] = useState(
+    recipe.dislikes.includes(userInfo?._id)
+  );
+  const [isFavorite, setIsFavorite] = useState(
+    userInfo?.favorites.includes(recipe._id)
+  );
   const [like, setLike] = useState(recipe.likes.length);
   const [dislike, setDisLike] = useState(recipe.dislikes.length);
-  const { userInfo } = useContext(userContext);
+
   const navigate = useNavigate();
   const navigateTo = (route) => {
     navigate(route);
   };
 
-  useEffect(() => {
-    setIsLiked(recipe.likes.includes(userInfo?._id));
-  }, [userInfo?._id, recipe.likes]);
+  const favoriteHandler = async () => {
+    if (userInfo?._id) {
+      try {
+        await axios
+          .put("/recipes/add/toFavorites/" + recipe._id, {
+            userId: userInfo._id,
+          })
+          .then((res) => {
+            setUserInfo((preData) => {
+              const data = preData;
+              const index = data.favorites.indexOf(recipe._id);
 
-  useEffect(() => {
-    setIsDisLiked(recipe.dislikes.includes(userInfo?._id));
-  }, [userInfo?._id, recipe.dislikes]);
-
+              data.favorites.includes(recipe._id)
+                ? data.favorites.splice(index, 1)
+                : data.favorites.push(recipe._id);
+              return data;
+            });
+          });
+      } catch (err) {
+        console.log(err);
+      }
+      setIsFavorite((favorite) => !favorite);
+    }
+  };
   const likeHandler = () => {
     if (userInfo?._id) {
       try {
         axios
           .put("/recipes/" + recipe._id + "/like", { userId: userInfo._id })
-          .then((res) => {
-            setClicked((click) => !click);
-          });
+          .then((res) => {});
       } catch (err) {
         console.log(err);
       }
       setLike(isLiked ? like - 1 : like + 1);
-      setDisLike(recipe.dislikes.length);
+      setDisLike(isDisLiked ? dislike - 1 : dislike);
       setIsDisLiked(false);
       setIsLiked(!isLiked);
     }
@@ -49,19 +72,14 @@ export default function Recipes({ recipe, setClicked }) {
   const dislikeHandler = () => {
     if (userInfo?._id) {
       try {
-        axios
-          .put("/recipes/" + recipe._id + "/dislike", {
-            userId: userInfo._id,
-          })
-          .then((res) => {
-            setClicked((click) => !click);
-            console.log(setClicked);
-          });
+        axios.put("/recipes/" + recipe._id + "/dislike", {
+          userId: userInfo._id,
+        });
       } catch (err) {
         console.log(err);
       }
       setDisLike(isDisLiked ? dislike - 1 : dislike + 1);
-      setLike(recipe.likes.length);
+      setLike(isLiked ? like - 1 : like);
       setIsLiked(false);
       setIsDisLiked(!isDisLiked);
     }
@@ -69,7 +87,15 @@ export default function Recipes({ recipe, setClicked }) {
 
   return (
     <div className="singleRecipe">
-      <div className="singleRecipeLeft">
+      <div className="singleRecipeTop">
+        <div className="singleRecipeFavorite">
+          {isFavorite ? (
+            <Favorite htmlColor="red" onClick={favoriteHandler} />
+          ) : (
+            <FavoriteBorder htmlColor="red" onClick={favoriteHandler} />
+          )}
+        </div>
+
         <div className="recipeImgConatiner">
           <img
             src={"/images/recipe/" + recipe?.picture}
@@ -93,7 +119,7 @@ export default function Recipes({ recipe, setClicked }) {
           <div className="likeNumber">{dislike}</div>
         </div>
       </div>
-      <div className="singleRecipeRight">
+      <div className="singleRecipeBottom">
         <h3 className="singleRecipeTitle">
           Name :
           <span
@@ -102,18 +128,13 @@ export default function Recipes({ recipe, setClicked }) {
               navigateTo(`/recipe/${recipe._id}`);
             }}
           >
-            {" "}
             {recipe.title}
           </span>
-        </h3>
-        <h3 className="singleRecipeAuthor">
-          Author:
-          <span className="singleRecipeAuthorText">{recipe.userId}</span>
         </h3>
         <div className="singleRecipeDescConatiner">
           <h3 className="singleRecipeDesc">Description</h3>
           <p className="singleRecipeDescText">
-            {recipe.desc.slice(0, 130)} ...
+            {recipe.desc.slice(0, 100)} ...
           </p>
         </div>
       </div>

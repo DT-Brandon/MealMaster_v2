@@ -1,0 +1,38 @@
+.aboutPageContainer {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.aboutContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  min-height: 300px;
+  height: fit-content;
+  padding: 20px;
+}
+.aboutImgContainer {
+  width: 90%;
+  max-width: 400px;
+  min-width: 300px;
+  height: 100%;
+}
+.aboutTextContainer {
+  width: 90%;
+  max-width: 800px;
+  min-width: 300px;
+  min-height: 350px;
+  padding: 0px 20px;
+  font-weight: 500;
+  color: rgb(41, 40, 40);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  background-color: azure;
+}
+@media (max-width: 500px) {
+  .thirdImage {
+    display: none;
+  }
+}

@@ -1,11 +1,11 @@
 import { useState, useContext, useEffect } from "react";
 import { userContext } from "../../userContext";
-import "./saveditems.css";
+import "./createditems.css";
 import Recipes from "../recipes/Recipes";
 import axios from "axios";
 import ReactPaginate from "react-paginate";
 
-export default function SavedItems() {
+export default function CreatedItems() {
   const [recipesList, setRecipesList] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const { userInfo } = useContext(userContext);
@@ -14,7 +14,7 @@ export default function SavedItems() {
     const fetchRecipes = async () => {
       try {
         await axios
-          .get(`/recipes/${userInfo._id}/favorites/recipes`)
+          .get(`/recipes/${userInfo._id}/myrecipes/all`)
           .then((res) => {
             setRecipesList(res.data);
           });
@@ -46,9 +46,7 @@ export default function SavedItems() {
 
   return (
     <div>
-      {recipesList.length === 0 && (
-        <h2>There is no Recipe Added to your Favorites</h2>
-      )}
+      {recipesList.length === 0 && <h2>You have not created any recipe Yet</h2>}
 
       <div className="recipesContainer">{currentPageData} </div>
 

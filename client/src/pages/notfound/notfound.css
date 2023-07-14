@@ -1,0 +1,11 @@
+.notFoundPage {
+  height: calc(100vh - 90px);
+  height: 500px;
+}
+.notFoundLink {
+  margin: 5px;
+}
+.notFoundImgContainer {
+  width: 250px;
+  height: 250px;
+}

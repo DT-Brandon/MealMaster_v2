@@ -1,7 +1,7 @@
 .topbarContainer {
   height: 75px;
   width: 100%;
-  background-color: orange;
+  background-color: rgba(255, 166, 0, 0.534);
   display: flex;
   align-items: center;
   position: sticky;
@@ -22,14 +22,6 @@
   object-fit: cover;
 }
 
-.topbarCenter {
-  flex: 6;
-}
-
-/* .topbarCenter {
-  display: flex;
-  justify-content: flex-end;
-} */
 .searchbar {
   width: fit-content;
   height: 50px;
@@ -98,4 +90,38 @@
   z-index: 200;
   top: 0;
   right: 0;
+}
+.topBarMenuDrop {
+  display: none;
+}
+@media (max-width: 500px) {
+  .topbarLinks {
+    display: none;
+    top: -425px;
+  }
+  .topbarLink {
+    font-size: 20px;
+  }
+  .topBarMenuDrop {
+    display: inline-block;
+    cursor: pointer;
+  }
+  .topbardDropped {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(500px);
+    right: 5px;
+    background-color: orange;
+    justify-content: space-around;
+    width: 100%;
+    text-align: center;
+    height: 500px;
+    z-index: 99;
+    /*    transition: transform 4s ease-in, display 2.8s ease-in-out; */
+  }
+  .active {
+    color: orangered;
+    border: none;
+  }
 }

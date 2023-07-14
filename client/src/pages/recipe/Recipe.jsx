@@ -15,6 +15,8 @@ import axios from "axios";
 export default function Recipe() {
   const params = useParams();
   const [recipe, setRecipe] = useState();
+  const [recipeComments, setRecipeComments] = useState([]);
+  const [commented, setCommented] = useState(false);
 
   const comment = useRef();
 
@@ -24,15 +26,18 @@ export default function Recipe() {
   const [dislike, setDisLike] = useState();
   const { userInfo } = useContext(userContext);
   useEffect(() => {
-    try {
-      axios.get(`/recipes/${params.recipeId}`).then((res) => {
-        setRecipe(res.data);
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    const fetch = async () => {
+      try {
+        axios.get(`/recipes/${params.recipeId}`).then((res) => {
+          setRecipe(res.data);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetch();
     // eslint-disable-next-line
-  }, [like, dislike]);
+  }, []);
   useEffect(() => {
     setIsLiked(recipe?.likes.includes(userInfo?._id));
     setLike(recipe?.likes.length);
@@ -50,7 +55,7 @@ export default function Recipe() {
         console.log(err);
       }
       setLike(isLiked ? like - 1 : like + 1);
-      setDisLike(recipe.dislikes.length);
+      setDisLike(isDisLiked ? dislike - 1 : dislike);
       setIsDisLiked(false);
       setIsLiked(!isLiked);
     }
@@ -65,11 +70,25 @@ export default function Recipe() {
         console.log(err);
       }
       setDisLike(isDisLiked ? dislike - 1 : dislike + 1);
-      setLike(recipe.likes.length);
+      setLike(isLiked ? like - 1 : like);
       setIsLiked(false);
       setIsDisLiked(!isDisLiked);
     }
   };
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        axios.get(`/recipes/${params.recipeId}/comment/all`).then((res) => {
+          const data = res.data.slice(0).slice(-20).reverse();
+          setRecipeComments(data);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetch();
+    // eslint-disable-next-line
+  }, [commented]);
 
   let i = 1;
 
@@ -95,10 +114,11 @@ export default function Recipe() {
   });
   i = 1;
 
-  const commentComponent = recipe?.comments.map((comment) => {
+  const commentComponent = recipeComments?.map((comment) => {
     const newComment = (
       <div key={comment.userId + i} className="comment">
-        <span className="step"> </span> {comment.comment}
+        <p className="commentName">{comment.username} :</p>
+        <span className="commentText">{comment.comment} </span>
       </div>
     );
     i++;
@@ -113,11 +133,12 @@ export default function Recipe() {
     };
     try {
       axios.put("/recipes/" + recipe._id + "/comment", data).then(
-        setRecipe((prevRecipe) => {
+        setCommented((prevValue) => !prevValue)
+        /* setRecipe((prevRecipe) => {
           const commentList = recipe?.comments;
           commentList.push(data);
           return { ...prevRecipe, comments: commentList };
-        })
+        }) */
       );
     } catch (error) {
       console.log(error);

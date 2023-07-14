@@ -6,12 +6,16 @@ import Main from "../../components/main/Main";
 import ProfileInfo from "../../components/Profileinfo/ProfileInfo";
 import ChangePassword from "../../components/changePassword/ChangePassword";
 import Footer from "../../components/footer/Footer";
+import SavedItems from "../../components/saveditems/SavedItems";
+import CreatedItems from "../../components/createditems/CreatedItems";
 
 export default function Profile() {
   const [currentPage, setCurrentPage] = useState("Profile Info");
   const pages = [
     { text: "Profile Info", page: <ProfileInfo /> },
     { text: "Modify Password", page: <ChangePassword /> },
+    { text: "Favorite Recipes", page: <SavedItems /> },
+    { text: "My Recipes", page: <CreatedItems /> },
   ];
 
   const Page = () => {
@@ -32,7 +36,11 @@ export default function Profile() {
     <div className="profileContainer">
       <Topbar />
       <div className="profileWrapper">
-        <Sidebar setPage={setCurrentPage} pages={pages} />
+        <Sidebar
+          setPage={setCurrentPage}
+          pages={pages}
+          currentPage={currentPage}
+        />
         <Main currentPage={ThePage} />
       </div>
       <Footer />

@@ -1,0 +1,20 @@
+.contactFormContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.contactTitle {
+  color: #333;
+}
+
+.contactMain {
+  font-weight: bolder;
+}
+
+.contactText {
+  margin: 10px 10px;
+}
+.contactMail {
+  cursor: pointer;
+}

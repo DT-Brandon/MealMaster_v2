@@ -7,6 +7,9 @@ import { useContext } from "react";
 import Add from "./pages/add/add";
 import Recipe from "./pages/recipe/Recipe";
 import Search from "./pages/search/Search";
+import Contact from "./pages/contact/Contact"
+import NotFound from "./pages/notfound/NotFound";
+import About from "./pages/about/About";
 
 function App() {
   const { userInfo } = useContext(userContext);
@@ -31,6 +34,18 @@ function App() {
     {
       path: "/search",
       element: <Search />,
+    },
+    {
+      path: "/contact",
+      element: <Contact />,
+    },
+    {
+      path: "/about",
+      element: <About />,
+    },
+    {
+      path: "*",
+      element: <NotFound />,
     },
   ]);
 

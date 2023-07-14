@@ -83,9 +83,9 @@ app.get("/start", (req, res) => {
 
 
 
-app.use('/', (req, res) => {
+/* app.use('/', (req, res) => {
   res.sendFile(path.join(__dirname, "../client/build", "index.html"))
-})
+}) */
 
 app.listen(8800, () => {
   console.log("Backend server is running!");

@@ -5,6 +5,7 @@ import { userContext } from "../../userContext";
 import { AddAPhoto, Cancel } from "@mui/icons-material";
 import { ReactSession } from "react-client-session";
 import "./profileinfo.css";
+import { useNavigate } from "react-router";
 
 export default function ProfileInfo() {
   const [file, setFile] = useState(null);
@@ -13,6 +14,10 @@ export default function ProfileInfo() {
   const username = useRef();
   const password = useRef();
   const email = userInfo?.email;
+  const navigate = useNavigate();
+  const navigateTo = (route) => {
+    navigate(route);
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -41,7 +46,7 @@ export default function ProfileInfo() {
         ReactSession.set("user", JSON.stringify(res.data));
         setUserInfo(res.data);
         setFile(null);
-        window.location.reload();
+        navigateTo("/");
       });
     } catch (err) {
       setErrMessage(err.response.data);

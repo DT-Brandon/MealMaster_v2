@@ -10,7 +10,7 @@ router.post("/add", async (req, res) => {
     const savedRecipe = await newRecipe.save();
     res.status(200).json(savedRecipe);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
   }
 });
 //update a recipe
@@ -25,7 +25,7 @@ router.put("/update/:id", async (req, res) => {
       res.status(403).json("you can update only your post");
     }
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
   }
 });
 
@@ -41,7 +41,7 @@ router.delete("/:id", async (req, res) => {
       res.status(403).json("you can delete only your recipe");
     }
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
   }
 });
 
@@ -61,7 +61,7 @@ router.put("/:id/like", async (req, res) => {
       res.status(200).json("The recipe has been unliked");
     }
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
   }
 });
 
@@ -81,7 +81,7 @@ router.put("/:id/dislike", async (req, res) => {
       res.status(200).json("The post has been undisliked");
     }
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
   }
 });
 
@@ -96,27 +96,85 @@ router.get("/:id", async (req, res) => {
     res.status(200).json(newRecipe);
   } catch (err) {
     console.log(err);
-    res.status(500).json(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
+  }
+});
+//Add or Remove a Recipe to favorites
+router.put("/add/toFavorites/:id", async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.body.userId)
+    if (!currentUser.favorites.includes(req.params.id)) {
+      await currentUser.updateOne({ $push: { favorites: req.params.id } });
+      res.status(200).json("The recipe added to favorites");
+    } else {
+      await currentUser.updateOne({ $pull: { favorites: req.params.id } });
+      res.status(200).json("The recipe removed from favorites");
+    }
+  } catch (err) {
+    res.status(500).json("an error from our side Occured please contact us if error persist");
   }
 });
 
-//get all recipe
-
-router.get("/user/all", async (req, res) => {
+//get random recipes
+router.get("/user/random", async (req, res) => {
   try {
     const recipes = await Recipe.find({ source: "Meal Master User" });
     const recipesFinal = await Promise.all(
       recipes.map(async (recipe) => {
         let newRecipe = recipe;
         const currentUser = await User.findById(recipe.userId);
-        newRecipe.userId = currentUser?.username;
+
+        newRecipe.userId = currentUser ? currentUser.username : 'Anonymous';
         return newRecipe;
       })
     );
+    const shuffled = recipesFinal.sort(() => 0.5 - Math.random());
+    res.status(200).json(shuffled.slice(0, 36));
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
+  }
+});
+
+//get a user favorites recipes
+router.get("/:userId/favorites/recipes", async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.params.userId)
+    const recipesFavorites = await Promise.all(
+      currentUser.favorites?.map(async (recipeId) => {
+        let newRecipe = await Recipe.findById(recipeId);
+        const recipeOwner = await User.findById(newRecipe.userId);
+
+        newRecipe.userId = recipeOwner ? recipeOwner.username : 'Anonymous';
+        return newRecipe;
+      })
+    );
+
+    res.status(200).json(recipesFavorites);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
+  }
+});
+
+//get a user  all recipes
+router.get("/:userId/myrecipes/all", async (req, res) => {
+  try {
+    const recipes = await Recipe.find({ userId: req.params.userId })
+    const recipesFinal = await Promise.all(
+      recipes.map(async (recipe) => {
+        let newRecipe = recipe;
+        const currentUser = await User.findById(recipe.userId);
+
+        newRecipe.userId = currentUser ? currentUser.username : 'Anonymous';
+        return newRecipe;
+      })
+    );
+
     res.status(200).json(recipesFinal);
   } catch (err) {
     console.log(err);
-    res.status(500).json(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
   }
 });
 
@@ -126,8 +184,27 @@ router.put("/:id/comment", async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
     await recipe.updateOne({ $push: { comments: req.body } });
+    res.status(200).json("comment sent succesfully")
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
+  }
+});
+//get a recipe comments
+
+router.get("/:id/comment/all", async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    const recipeComments = await Promise.all(
+      recipe.comments.map(async (comment) => {
+        let newComment = { ...comment };
+        const currentUser = await User.findById(comment.userId);
+        newComment.username = currentUser ? currentUser.username : 'Anonymous';
+        return newComment;
+      })
+    );
+    res.status(200).json(recipeComments)
+  } catch (err) {
+    res.status(500).json("an error from our side Occured please contact us if error persist");
   }
 });
 
@@ -135,7 +212,8 @@ router.put("/:id/comment", async (req, res) => {
 
 router.post("/all/search", async (req, res) => {
   try {
-    let recipes = await Recipe.find();
+    let recipes = []
+    recipes = await Recipe.find();
     if (req.body.title) {
       recipes = recipes.filter(
         (recipe) =>
@@ -144,10 +222,10 @@ router.post("/all/search", async (req, res) => {
       );
     }
     if (req.body.cuisine) {
-      recipes = recipes.filter((recipe) => recipe.cuisine === req.body.cuisine);
+      recipes = recipes.filter((recipe) => recipe.cuisine.toLowerCase() === req.body.cuisine.toLowerCase());
     }
     if (req.body.diet) {
-      recipes = recipes.filter((recipe) => recipe.diet === req.body.diet);
+      recipes = recipes.filter((recipe) => recipe.diet.toLowerCase() === req.body.diet.toLowerCase());
     }
     if (req.body.maxTime) {
       recipes = recipes.filter(
@@ -171,7 +249,6 @@ router.post("/all/search", async (req, res) => {
         );
       });
     }
-    recipes.slice(0, 40);
     const recipesFinal = await Promise.all(
       recipes.map(async (recipe) => {
         let newRecipe = recipe;
@@ -182,7 +259,7 @@ router.post("/all/search", async (req, res) => {
     );
     res.status(200).json(recipesFinal);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json("an error from our side Occured please contact us if error persist");
     console.log(err);
   }
 });

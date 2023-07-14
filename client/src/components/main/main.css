@@ -2,5 +2,7 @@
   display: flex;
   flex: 9;
   position: relative;
-  height: calc(99vh - 80px);
+  margin: 10px;
+  flex-direction: row;
+  justify-content: center;
 }

@@ -4,9 +4,12 @@ import Recipes from "../../components/recipes/Recipes";
 import Topbar from "../../components/topbar/Topbar";
 import Footer from "../../components/footer/Footer";
 import "./search.css";
+import ReactPaginate from "react-paginate";
 
 export default function Search() {
   const [recipeList, setRecipeList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [recipeFound, setRecipeFound] = useState(true);
 
   const cuisines = [
     "none",
@@ -53,7 +56,7 @@ export default function Search() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        await axios.get("/recipes/user/all").then((res) => {
+        await axios.get("/recipes/user/random").then((res) => {
           setRecipeList(res.data);
         });
       } catch (err) {
@@ -62,6 +65,19 @@ export default function Search() {
     };
     fetchAll();
   }, []);
+
+  const PER_PAGE = 12;
+  const offset = currentPage * PER_PAGE;
+  const currentPageData = recipeList
+    .slice(offset, offset + PER_PAGE)
+    .map((recipe) => {
+      return <Recipes key={recipe._id} recipe={recipe} />;
+    });
+
+  const pageCount = Math.ceil(recipeList.length / PER_PAGE);
+  function handlePageClick({ selected: selectedPage }) {
+    setCurrentPage(selectedPage);
+  }
 
   const diet = useRef();
   const dietSelectInput = diets.map((diet) => {
@@ -130,6 +146,8 @@ export default function Search() {
     });
   }
   const allergieInput = allergieValue.map((allergie) => {
+    const name = allergie.name;
+    const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
     return (
       <div className="checkBoxGroup">
         <input
@@ -143,7 +161,7 @@ export default function Search() {
           checked={allergie.check}
         />
         <label htmlFor={allergie.name} className="checkBoxLabel">
-          {allergie.name}
+          {capitalizedName + " Free"}
         </label>
       </div>
     );
@@ -180,6 +198,11 @@ export default function Search() {
     try {
       await axios.post("/recipes/all/search", searchOption).then((res) => {
         setRecipeList(res.data);
+        if (res.data.length >= 1) {
+          setRecipeFound(true);
+        } else {
+          setRecipeFound(false);
+        }
       });
     } catch (err) {
       console.log(err);
@@ -251,9 +274,7 @@ export default function Search() {
             />
           </div>
           <div className="searchInputContainer">
-            <span className="searchFormLabel">
-              Does Your recipe conatine any of the following?
-            </span>
+            <span className="searchFormLabel">Specify any Intolerances</span>
 
             <div className=" searchAllergie">{allergieInput}</div>
           </div>
@@ -263,7 +284,31 @@ export default function Search() {
         </form>
       </div>
       <div className="searchResults">
-        <div className="recipesContainer">{recipeComponents}</div>
+        {!recipeFound && (
+          <div>
+            <h2>
+              Your recipe is not yet availablle in Our Database, Our chefs are
+              working hard to solve this.
+            </h2>
+            <p>Feel free to contact us for any Recipe suggestion</p>
+          </div>
+        )}
+
+        <div className="recipesContainer">{currentPageData}</div>
+        <div className="homePagination">
+          <ReactPaginate
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={handlePageClick}
+            containerClassName={"pagination"}
+            previousLinkClassName={"pagination__link"}
+            nextLinkClassName={"pagination__link"}
+            disabledClassName={"pagination__link--disabled"}
+            activeClassName={"pagination__link--active"}
+            pageClassName={"pageElement"}
+          />
+        </div>
       </div>
       <Footer />
     </div>

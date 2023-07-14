@@ -1,5 +1,5 @@
 import "./topbar.css";
-import { Search } from "@mui/icons-material";
+import { Menu, RestaurantMenu, Search } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router";
 import { useContext, useState } from "react";
 import { userContext } from "../../userContext";
@@ -9,6 +9,10 @@ export default function Topbar() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [droppedlist, setdroppedList] = useState(false);
+  const handleDrop = () => {
+    setdroppedList((listValue) => !listValue);
+  };
   const { userInfo, logout, restartSession } = useContext(userContext);
   const navigate = useNavigate();
   const navigateTo = (route) => {
@@ -48,7 +52,11 @@ export default function Topbar() {
               Search
             </span>
           </div>
-          <div className="topbarLinks">
+          <div
+            className={
+              !droppedlist ? "topbarLinks" : "topbarLinks topbardDropped"
+            }
+          >
             <span
               className={
                 location.pathname === "/" ? "topbarLink active" : "topbarLink"
@@ -80,7 +88,7 @@ export default function Topbar() {
                   handleShow();
                 }}
               >
-                login
+                Login
               </span>
             )}
 
@@ -109,6 +117,18 @@ export default function Topbar() {
                 Log-out
               </span>
             )}
+            <span
+              className={
+                location.pathname === "/about"
+                  ? "topbarLink active"
+                  : "topbarLink"
+              }
+              onClick={() => {
+                navigateTo("/about");
+              }}
+            >
+              About Us
+            </span>
           </div>
 
           <img
@@ -120,6 +140,9 @@ export default function Topbar() {
             alt=""
             className="topbarImg"
           />
+        </div>
+        <div className="topBarMenuDrop" onClick={handleDrop}>
+          {!droppedlist ? <Menu /> : <RestaurantMenu />}
         </div>
       </div>
       {show && (

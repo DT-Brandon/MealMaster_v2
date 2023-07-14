@@ -5,17 +5,17 @@ import Footer from "../../components/footer/Footer";
 import Recipes from "../../components/recipes/Recipes";
 
 import axios from "axios";
+import ReactPaginate from "react-paginate";
+import { Link } from "react-router-dom";
 
 export default function Home() {
-  /* const [show, setShow] = useState(false); */
-
   const [recipesList, setRecipesList] = useState([]);
-  const [clicked, setClicked] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        await axios.get("/recipes/user/all").then((res) => {
+        await axios.get("/recipes/user/random").then((res) => {
           setRecipesList(res.data);
         });
       } catch (err) {
@@ -25,27 +25,68 @@ export default function Home() {
     fetchRecipes();
 
     // eslint-disable-next-line
-  }, [clicked]);
+  }, []);
+
+  const PER_PAGE = 12;
+  const offset = currentPage * PER_PAGE;
+  const currentPageData = recipesList
+    .slice(offset, offset + PER_PAGE)
+    .map((recipe) => {
+      return <Recipes key={recipe._id} recipe={recipe} />;
+    });
+
+  const pageCount = Math.ceil(recipesList.length / PER_PAGE);
+  function handlePageClick({ selected: selectedPage }) {
+    setCurrentPage(selectedPage);
+  }
 
   const recipeComponents = recipesList.map((recipe) => {
-    return <Recipes key={recipe._id} recipe={recipe} setClicked={setClicked} />;
+    return <Recipes key={recipe._id} recipe={recipe} />;
   });
 
-  /*  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true); */
   return (
     <div>
       <Topbar />
-      <div className="homeContainer"></div>
-      {/*  <div className="RegisterModal">
-        {show && <Registration setClose={handleClose} />}
-      </div> */}
       <div className="content">
-        <div className="homeSubTitle">
-          <h2>The recipes you should try </h2>
-          <h2>{clicked === false ? "true" : "false"}</h2>
+        <div className="homeHeroConatiner">
+          <div className="homeHeroImgContainer">
+            <img
+              src="/images/HeroImage.webp"
+              alt="dish image"
+              className="homeHeroImg"
+            />
+          </div>
+          <div className="homeHeroTextConatiner">
+            <div className="homeHeroText">
+              Grab our recipes, and embark into a delicious Journey, that will
+              unleash the true{" "}
+              <span className="heroMaintext">Meal Master </span>
+              within you
+            </div>
+            <div className="heroSearchButttonConatiner">
+              <Link to="/search">
+                <div className="heroSearchButtton">Search A Recipe</div>
+              </Link>
+            </div>
+          </div>
         </div>
-        <div className="recipesContainer">{recipeComponents}</div>
+        <h1>Here are few recipes for you!</h1>
+        <div className="recipesContainer">{currentPageData} </div>
+
+        <div className="homePagination">
+          <ReactPaginate
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={handlePageClick}
+            containerClassName={"pagination"}
+            previousLinkClassName={"pagination__link"}
+            nextLinkClassName={"pagination__link"}
+            disabledClassName={"pagination__link--disabled"}
+            activeClassName={"pagination__link--active"}
+            pageClassName={"pageElement"}
+          />
+        </div>
       </div>
       <Footer />
     </div>

@@ -60,12 +60,12 @@ export default function Registration({ setClose }) {
 
       try {
         await axios.post("/auth/register", user).then((res) => {
-          setUserInfo(user);
-          ReactSession.set("user", JSON.stringify(res.data));
+          setMessageLogin("Verify you Account in Your Mail before You login");
+          toogleRegisterForm();
         });
-        setClose();
       } catch (err) {
         setMessage(err.response.data);
+        console.log(err);
       }
     }
   };

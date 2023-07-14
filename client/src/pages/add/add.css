@@ -10,7 +10,8 @@
   flex-direction: column;
   padding: 10px 50px;
   min-width: 350px;
-  width: 70%;
+  max-width: 900px;
+  width: 95%;
   z-index: 1;
   background-color: wheat;
   margin: 7px 0px 7px 0px;
@@ -41,19 +42,21 @@
   margin-left: 50px;
   width: 50px;
   height: 50px;
-  border-radius: 5px;
+  border-radius: 4px;
   background-color: white;
   cursor: pointer;
   padding: 2px;
+  padding: 8px;
 }
 .removeIngredient {
   cursor: pointer;
   font-size: 15px;
   width: 50px;
   height: 50px;
-  border-radius: 5px;
+  border-radius: 4px;
   background-color: white;
   padding: 2px;
+  padding: 8px;
 }
 
 .checkBoxContainer {

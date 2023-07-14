@@ -1,9 +1,11 @@
-.profile{
-    display: flex;
-    position: sticky;
+.profileWrapper {
+  display: flex;
+  flex-direction: row;
+  position: relative;
 }
-
-.profileWrapper{
-    display: flex;
-    flex-direction: row;
+@media (max-width: 500px) {
+  .profileWrapper {
+    flex-direction: column;
+    justify-content: center;
+  }
 }

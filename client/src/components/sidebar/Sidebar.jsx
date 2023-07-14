@@ -1,10 +1,14 @@
 import "./sidebar.css";
 
-export default function Sidebar({ setPage, pages }) {
+export default function Sidebar({ setPage, pages, currentPage }) {
   const linkList = pages.map((page) => {
     return (
       <li
-        className="sidebarListItem"
+        className={
+          currentPage === page.text
+            ? "sidebarListItem sidebarActive"
+            : "sidebarListItem "
+        }
         key={page.text}
         onClick={() => {
           setPage(page.text);

@@ -1,5 +1,7 @@
 import React from "react";
 import "./footer.css";
+import { Facebook, Instagram, LinkedIn, Twitter } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -8,8 +10,16 @@ export default function Footer() {
         <div className="footerPart">
           <h1 className="footerPartTitle">Learn More</h1>
           <ul className="footerPartList">
-            <li className="footerPartListItem">About Us</li>
-            <li className="footerPartListItem">Contact Us</li>
+            <li className="footerPartListItem">
+              <Link to="/about" className="notFoundLink">
+                About Us
+              </Link>
+            </li>
+            <li className="footerPartListItem">
+              <Link to="/contact" className="notFoundLink">
+                Contact Us
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="footerPart footerMid">
@@ -22,10 +32,18 @@ export default function Footer() {
         <div className="footerPart">
           <h1 className="footerPartTitle">Connect</h1>
           <ul className="footerPartList">
-            <li className="footerPartListItem">facebook</li>
-            <li className="footerPartListItem">twitter</li>
-            <li className="footerPartListItem">Instagram</li>
-            <li className="footerPartListItem">Linked In</li>
+            <li className="footerPartListItem">
+              <Facebook className="linkIcon" htmlColor="blue" /> Facebook
+            </li>
+            <li className="footerPartListItem">
+              <Twitter className="linkIcon" htmlColor="#00acee" /> Twitter
+            </li>
+            <li className="footerPartListItem">
+              <Instagram className="linkIcon" htmlColor="purple" /> Instagram
+            </li>
+            <li className="footerPartListItem">
+              <LinkedIn className="linkIcon" htmlColor="#0072b1" /> Linked In
+            </li>
           </ul>
         </div>
       </div>

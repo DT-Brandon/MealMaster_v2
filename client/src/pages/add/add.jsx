@@ -4,12 +4,17 @@ import Footer from "../../components/footer/Footer";
 import "./add.css";
 import { userContext } from "../../userContext";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 export default function Add() {
-  const [ingredientList, setIngredientList] = useState(3);
-  const [directionList, setDirectionList] = useState(3);
-  const [notesList, setNotesList] = useState(1);
+  const [ingredientList, setIngredientList] = useState(1);
+  const [directionList, setDirectionList] = useState(1);
+  const [notesList, setNotesList] = useState(0);
   const { userInfo } = useContext(userContext);
+  const navigate = useNavigate();
+  const navigateTo = (route) => {
+    navigate(route);
+  };
   const cuisines = [
     "none",
     "african",
@@ -177,8 +182,6 @@ export default function Add() {
 
   const [allergieValue, setAllergieValue] = useState(allergies);
 
-  /* let allergieValue = allergies; */
-
   function handleAllergieChange(allergie) {
     setAllergieValue((prevData) => {
       return prevData.map((data) => {
@@ -187,12 +190,6 @@ export default function Add() {
           : data;
       });
     });
-
-    /*  allergieValue = allergieValue.map((data) => {
-      return data.name === allergie.name
-        ? { name: data.name, check: !data.check }
-        : data;
-    }); */
   }
 
   const allergieInput = allergieValue.map((allergie) => {
@@ -265,7 +262,9 @@ export default function Add() {
       Recipe.picture = fileName;
 
       try {
-        await axios.post("/upload/recipe", data);
+        await axios.post("/upload/recipe", data).then((res) => {
+          navigateTo(`/profile`);
+        });
       } catch (err) {
         console.log(err);
       }
@@ -315,11 +314,11 @@ export default function Add() {
               className="removeIngredient"
               onClick={() => {
                 setIngredientList((list) => {
-                  return list <= 0 ? list : list - 1;
+                  return list <= 1 ? list : list - 1;
                 });
               }}
             >
-              Remove
+              Remove Ingredient
             </span>
             <span
               className="addIngredient"
@@ -327,7 +326,7 @@ export default function Add() {
                 setIngredientList((list) => list + 1);
               }}
             >
-              Add
+              Add Ingredient
             </span>
           </div>
           <span className="addFormLabel">Directions(required)</span>
@@ -337,11 +336,11 @@ export default function Add() {
               className="removeIngredient"
               onClick={() => {
                 setDirectionList((list) => {
-                  return list <= 0 ? list : list - 1;
+                  return list <= 1 ? list : list - 1;
                 });
               }}
             >
-              Remove
+              Remove Step
             </span>
             <span
               className="addIngredient"
@@ -349,7 +348,7 @@ export default function Add() {
                 setDirectionList((list) => list + 1);
               }}
             >
-              Add
+              Add Step
             </span>
           </div>
 
@@ -402,7 +401,7 @@ export default function Add() {
                 });
               }}
             >
-              Remove
+              Remove Note
             </span>
             <span
               className="addIngredient"
@@ -410,7 +409,7 @@ export default function Add() {
                 setNotesList((list) => list + 1);
               }}
             >
-              Add
+              Add Note
             </span>
           </div>
           <button type="submit" className="addFormSubmit">

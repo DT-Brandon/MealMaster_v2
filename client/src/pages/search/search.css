@@ -10,12 +10,15 @@
   justify-content: flex-start;
   padding: 5px 5px 15px 5px;
   border-bottom: 2px solid black;
+  background-color: aquamarine;
+  margin-bottom: 30px;
 }
 .searchInputContainer {
   display: inline-block;
   padding: 10px 15px;
-  margin: 5px 5px;
   border: 1px solid orange;
+
+  color: rgb(17, 17, 17);
 }
 .searchAllergie {
   display: flex;
@@ -26,13 +29,17 @@
   margin: 0px 10px 0px 0px;
 }
 .searchFormInput {
-  height: 35x;
+  height: 30px;
+  font-size: 18px;
+}
+input:focus {
+  outline: none;
 }
 .searchFormSubmitContainer {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding-bottom: 7px;
+  margin-left: 10px;
 }
 .searchFormSubmit {
   height: fit-content;
