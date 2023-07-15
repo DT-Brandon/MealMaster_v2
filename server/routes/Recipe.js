@@ -11,6 +11,7 @@ router.post("/add", async (req, res) => {
     res.status(200).json(savedRecipe);
   } catch (err) {
     res.status(500).json("an error from our side Occured please contact us if error persist");
+    console.log(err)
   }
 });
 //update a recipe

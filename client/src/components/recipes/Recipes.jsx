@@ -128,7 +128,7 @@ export default function Recipes({ recipe }) {
               navigateTo(`/recipe/${recipe._id}`);
             }}
           >
-            {recipe.title}
+            {recipe.title.slice(0, 25)}
           </span>
         </h3>
         <div className="singleRecipeDescConatiner">

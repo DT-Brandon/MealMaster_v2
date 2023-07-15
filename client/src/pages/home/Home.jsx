@@ -59,7 +59,7 @@ export default function Home() {
           <div className="homeHeroTextConatiner">
             <div className="homeHeroText">
               Grab our recipes, and embark into a delicious Journey, that will
-              unleash the true{" "}
+              unleash the true
               <span className="heroMaintext">Meal Master </span>
               within you
             </div>
