@@ -52,6 +52,8 @@ export default function Recipes({ recipe }) {
         console.log(err);
       }
       setIsFavorite((favorite) => !favorite);
+    } else {
+      alert("You must be Logged in To perform this action");
     }
   };
   const likeHandler = () => {
@@ -67,6 +69,8 @@ export default function Recipes({ recipe }) {
       setDisLike(isDisLiked ? dislike - 1 : dislike);
       setIsDisLiked(false);
       setIsLiked(!isLiked);
+    } else {
+      alert("You must be Logged in To perform this action");
     }
   };
   const dislikeHandler = () => {
@@ -82,6 +86,8 @@ export default function Recipes({ recipe }) {
       setLike(isLiked ? like - 1 : like);
       setIsLiked(false);
       setIsDisLiked(!isDisLiked);
+    } else {
+      alert("You must be Logged in To perform this action");
     }
   };
 
@@ -90,13 +96,22 @@ export default function Recipes({ recipe }) {
       <div className="singleRecipeTop">
         <div className="singleRecipeFavorite">
           {isFavorite ? (
-            <Favorite htmlColor="red" onClick={favoriteHandler} />
+            <Favorite
+              htmlColor="red"
+              className="heavyIndex"
+              onClick={favoriteHandler}
+            />
           ) : (
             <FavoriteBorder htmlColor="red" onClick={favoriteHandler} />
           )}
         </div>
 
-        <div className="recipeImgConatiner">
+        <div
+          className="recipeImgConatiner"
+          onClick={() => {
+            navigateTo(`/recipe/${recipe._id}`);
+          }}
+        >
           <img
             src={"/images/recipe/" + recipe?.picture}
             alt={recipe.title}

@@ -82,7 +82,7 @@ export default function Home() {
             containerClassName={"pagination"}
             previousLinkClassName={"pagination__link"}
             nextLinkClassName={"pagination__link"}
-            disabledClassName={"pagination__link--disabled"}
+            disabledClassName={"pagination__link_disabled"}
             activeClassName={"pagination__link--active"}
             pageClassName={"pageElement"}
           />

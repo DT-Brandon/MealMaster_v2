@@ -9,6 +9,8 @@ import {
   ThumbUpOffAlt,
   ThumbDownSharp,
   ThumbUpSharp,
+  FavoriteBorder,
+  Favorite,
 } from "@mui/icons-material";
 import axios from "axios";
 
@@ -24,7 +26,8 @@ export default function Recipe() {
   const [isDisLiked, setIsDisLiked] = useState(false);
   const [like, setLike] = useState();
   const [dislike, setDisLike] = useState();
-  const { userInfo } = useContext(userContext);
+  const { userInfo, setUserInfo } = useContext(userContext);
+  const [isFavorite, setIsFavorite] = useState(false);
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -41,12 +44,12 @@ export default function Recipe() {
   useEffect(() => {
     setIsLiked(recipe?.likes.includes(userInfo?._id));
     setLike(recipe?.likes.length);
-  }, [userInfo?._id, recipe?.likes]);
-
-  useEffect(() => {
     setIsDisLiked(recipe?.dislikes.includes(userInfo?._id));
     setDisLike(recipe?.dislikes.length);
-  }, [userInfo?._id, recipe?.dislikes]);
+    setIsFavorite(userInfo?.favorites.includes(recipe?._id));
+  }, [userInfo?._id, recipe?.likes, recipe?.dislikes]);
+
+  useEffect(() => {}, [userInfo?._id, recipe?.dislikes]);
   const likeHandler = () => {
     if (userInfo?._id) {
       try {
@@ -58,6 +61,8 @@ export default function Recipe() {
       setDisLike(isDisLiked ? dislike - 1 : dislike);
       setIsDisLiked(false);
       setIsLiked(!isLiked);
+    } else {
+      alert("You must be Logged in To perform this action");
     }
   };
   const dislikeHandler = () => {
@@ -73,6 +78,34 @@ export default function Recipe() {
       setLike(isLiked ? like - 1 : like);
       setIsLiked(false);
       setIsDisLiked(!isDisLiked);
+    } else {
+      alert("You must be Logged in To perform this action");
+    }
+  };
+  const favoriteHandler = async () => {
+    if (userInfo?._id) {
+      try {
+        await axios
+          .put("/recipes/add/toFavorites/" + recipe._id, {
+            userId: userInfo._id,
+          })
+          .then((res) => {
+            setUserInfo((preData) => {
+              const data = preData;
+              const index = data.favorites.indexOf(recipe._id);
+
+              data.favorites.includes(recipe._id)
+                ? data.favorites.splice(index, 1)
+                : data.favorites.push(recipe._id);
+              return data;
+            });
+          });
+      } catch (err) {
+        console.log(err);
+      }
+      setIsFavorite((favorite) => !favorite);
+    } else {
+      alert("You must be Logged in To perform this action");
     }
   };
   useEffect(() => {
@@ -127,21 +160,20 @@ export default function Recipe() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {
-      userId: userInfo._id,
-      comment: comment.current.value,
-    };
-    try {
-      axios.put("/recipes/" + recipe._id + "/comment", data).then(
-        setCommented((prevValue) => !prevValue)
-        /* setRecipe((prevRecipe) => {
-          const commentList = recipe?.comments;
-          commentList.push(data);
-          return { ...prevRecipe, comments: commentList };
-        }) */
-      );
-    } catch (error) {
-      console.log(error);
+    if (userInfo?._id) {
+      const data = {
+        userId: userInfo._id,
+        comment: comment.current.value,
+      };
+      try {
+        axios
+          .put("/recipes/" + recipe._id + "/comment", data)
+          .then(setCommented((prevValue) => !prevValue));
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      alert("You must be Logged in To perform this action");
     }
   };
 
@@ -173,6 +205,13 @@ export default function Recipe() {
             Author: <span className="showRecipeName">{recipe?.userId}</span>
           </h2>
           <div className="showRecipeImgConatiner">
+            <div className="showRecipeFavorite">
+              {isFavorite ? (
+                <Favorite htmlColor="red" onClick={favoriteHandler} />
+              ) : (
+                <FavoriteBorder htmlColor="red" onClick={favoriteHandler} />
+              )}
+            </div>
             <img
               src={`/images/recipe/${recipe?.picture}`}
               alt=""
@@ -180,17 +219,29 @@ export default function Recipe() {
             />
           </div>
           <h2 className="showRecipePrepTime">
-            Prep Time: {recipe?.preparationTime} mins
+            Prep Time:{" "}
+            <span className="showRecipeName">
+              {recipe?.preparationTime} mins
+            </span>
           </h2>
           <h2 className="showRecipePrepTime">
-            servings: {recipe?.servings} person(s)
+            servings:{" "}
+            <span className="showRecipeName">
+              {recipe?.servings} person{recipe?.servings >= 1 ? "s" : ""}
+            </span>
           </h2>
           {recipe?.cuisine !== "default" && (
-            <h2 className="showRecipePrepTime">cuisine: {recipe?.cuisine}</h2>
+            <h2 className="showRecipePrepTime">
+              cuisine: <span className="showRecipeName">{recipe?.cuisine}</span>
+            </h2>
           )}
 
-          <h2 className="showRecipePrepTime">diet: {recipe?.diet}</h2>
-          <h2 className="showRecipePrepTime">calories: {recipe?.calories}</h2>
+          <h2 className="showRecipePrepTime">
+            diet: <span className="showRecipeName">{recipe?.diet}</span>
+          </h2>
+          <h2 className="showRecipePrepTime">
+            calories: <span className="showRecipeName">{recipe?.calories}</span>
+          </h2>
 
           <h2 className="showRecipeIngredientTitle">Ingredients</h2>
           {ingredientComponent}
@@ -198,7 +249,7 @@ export default function Recipe() {
           {directionComponent}
 
           <form onSubmit={handleSubmit} className="addComment">
-            <h2 className="showRecipeAddCommentTitle">add comments</h2>
+            <h2 className="showRecipeAddCommentTitle">Add A Comment</h2>
             <div className="showRecipeCommentContainer">
               <textarea
                 className="showRecipeComment"

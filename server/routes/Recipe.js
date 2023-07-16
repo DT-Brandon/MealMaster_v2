@@ -130,7 +130,7 @@ router.get("/user/random", async (req, res) => {
       })
     );
     const shuffled = recipesFinal.sort(() => 0.5 - Math.random());
-    res.status(200).json(shuffled.slice(0, 36));
+    res.status(200).json(shuffled);
   } catch (err) {
     console.log(err);
     res.status(500).json("an error from our side Occured please contact us if error persist");

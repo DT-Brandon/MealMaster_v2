@@ -91,7 +91,8 @@ a {
   background-color: orange;
   color: white;
 }
-.pagination__link--disabled {
+.pagination__link_disabled {
+  display: none;
   cursor: default;
   color: black;
 }

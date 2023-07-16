@@ -57,6 +57,7 @@ let transporter = nodemailer.createTransport({
 
 //VERIFY  EMAIL
 router.get("/verify/:email/:code", async (req, res) => {
+  req.body.email = req.body.email.toLowerCase()
   try {
     //verify if user exist
     const existingUser = await UnverifiedUser.findOne({ email: req.params.email, verifCode: req.params.code });
@@ -91,6 +92,7 @@ router.post("/register", async (req, res) => {
     //generate new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    req.body.email = req.body.email.toLowerCase()
 
     //verify if user exist
     const existingMail = await User.findOne({ email: req.body.email });
@@ -146,6 +148,7 @@ router.post("/register", async (req, res) => {
 
 //LOGIN
 router.post("/login", async (req, res) => {
+  req.body.email = req.body.email.toLowerCase()
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
