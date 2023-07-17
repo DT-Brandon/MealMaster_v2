@@ -57,7 +57,7 @@ let transporter = nodemailer.createTransport({
 
 //VERIFY  EMAIL
 router.get("/verify/:email/:code", async (req, res) => {
-  req.body.email = req.body.email.toLowerCase()
+  req.params.email = req.params.email.toLowerCase()
   try {
     //verify if user exist
     const existingUser = await UnverifiedUser.findOne({ email: req.params.email, verifCode: req.params.code });

@@ -38,3 +38,16 @@
 .linkIcon {
   margin-bottom: -4px;
 }
+@media (max-width: 500px) {
+  .footerWrapper {
+    flex-direction: column;
+  }
+  .footerMid {
+    border: none;
+  }
+  .footerPart {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
