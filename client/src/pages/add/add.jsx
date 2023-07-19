@@ -262,16 +262,16 @@ export default function Add() {
       Recipe.picture = fileName;
 
       try {
-        await axios.post("/upload/recipe", data).then((res) => {
-          navigateTo(`/profile`);
-        });
+        await axios.post("/upload/recipe", data);
       } catch (err) {
         console.log(err);
       }
     }
 
     try {
-      await axios.post("/recipes/add", Recipe);
+      await axios.post("/recipes/add", Recipe).then((res) => {
+        navigateTo(`/recipe/${res.data._id}`);
+      });
     } catch (error) {
       console.log(error);
     }

@@ -114,7 +114,7 @@ export default function Recipes({ recipe }) {
         >
           <img
             src={"/images/recipe/" + recipe?.picture}
-            alt={recipe.title}
+            alt={recipe.title.slice(0, 25)}
             className="recipeImg"
           />
         </div>
